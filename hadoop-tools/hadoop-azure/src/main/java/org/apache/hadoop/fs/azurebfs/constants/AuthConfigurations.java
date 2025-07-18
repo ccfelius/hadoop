@@ -32,6 +32,9 @@ public final class AuthConfigurations {
   /** Default OAuth token end point for the MSI flow. */
   public static final String DEFAULT_FS_AZURE_ACCOUNT_OAUTH_MSI_ENDPOINT =
       "http://169.254.169.254/metadata/identity/oauth2/token";
+    /** Default OAuth token end point for the Managed Identity flow. */
+  public static final String DEFAULT_FS_AZURE_ACCOUNT_OAUTH_MANAGEDIDENTITY_ENDPOINT =
+      DEFAULT_FS_AZURE_ACCOUNT_OAUTH_MSI_ENDPOINT;
   /** Default value for authority for the MSI flow. */
   public static final String DEFAULT_FS_AZURE_ACCOUNT_OAUTH_MSI_AUTHORITY =
       "https://login.microsoftonline.com/";

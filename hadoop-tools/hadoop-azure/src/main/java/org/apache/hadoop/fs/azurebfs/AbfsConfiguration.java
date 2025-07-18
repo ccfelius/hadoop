@@ -54,6 +54,7 @@ import org.apache.hadoop.fs.azurebfs.oauth2.AccessTokenProvider;
 import org.apache.hadoop.fs.azurebfs.oauth2.ClientCredsTokenProvider;
 import org.apache.hadoop.fs.azurebfs.oauth2.CustomTokenProviderAdapter;
 import org.apache.hadoop.fs.azurebfs.oauth2.MsiTokenProvider;
+import org.apache.hadoop.fs.azurebfs.oauth2.ManagedIdentityTokenProvider;
 import org.apache.hadoop.fs.azurebfs.oauth2.RefreshTokenBasedTokenProvider;
 import org.apache.hadoop.fs.azurebfs.oauth2.UserPasswordTokenProvider;
 import org.apache.hadoop.fs.azurebfs.security.AbfsDelegationTokenManager;
@@ -839,6 +840,8 @@ public class AbfsConfiguration{
             FS_AZURE_ACCOUNT_TOKEN_PROVIDER_TYPE_PROPERTY_NAME, null,
             AccessTokenProvider.class);
 
+        LOG.trace("Token Provider Class is " + tokenProviderClass);
+
         AccessTokenProvider tokenProvider;
         if (tokenProviderClass == ClientCredsTokenProvider.class) {
           String authEndpoint =
@@ -873,6 +876,13 @@ public class AbfsConfiguration{
           tokenProvider = new MsiTokenProvider(authEndpoint, tenantGuid,
               clientId, authority);
           LOG.trace("MsiTokenProvider initialized");
+          } else if (tokenProviderClass == ManagedIdentityTokenProvider.class) {
+            // Managed Identity Custom Implementation
+            // this always defaults to the default value for the authEndpoint
+          LOG.trace("Trying to Initialize ManagedIdentityTokenProvider");
+          tokenProvider = new ManagedIdentityTokenProvider();
+          LOG.trace("ManagedIdentityTokenProvider initialized");
+          // End custom implementation
         } else if (tokenProviderClass == RefreshTokenBasedTokenProvider.class) {
           String authEndpoint = getTrimmedPasswordString(
               FS_AZURE_ACCOUNT_OAUTH_REFRESH_TOKEN_ENDPOINT,
@@ -1117,7 +1127,7 @@ public class AbfsConfiguration{
     String value = getPasswordString(key);
     if (StringUtils.isBlank(value)) {
       value = defaultValue;
-    }
+  }
     return value.trim();
   }
 

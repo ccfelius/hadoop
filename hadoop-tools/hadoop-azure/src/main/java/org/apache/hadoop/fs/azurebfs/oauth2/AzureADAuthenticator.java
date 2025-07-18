@@ -154,6 +154,44 @@ public final class AzureADAuthenticator {
     return getTokenCall(authEndpoint, qp.serialize(), headers, "GET", true);
   }
 
+   /**
+   * TODO: FIX DESCRIPTION
+   * Gets AAD token from the local virtual machine's VM extension. This only works on
+   * an Azure VM with Managed Identity extension
+   * enabled.
+   *
+   * @param authEndpoint the OAuth 2.0 token endpoint associated
+   *                     with the user's directory (obtain from
+   *                     Active Directory configuration)
+   * @param bypassCache {@code boolean} specifying whether a cached token is acceptable or a fresh token
+   *                    request should me made to AAD
+   * @return {@link AzureADToken} obtained using the creds
+   * @throws IOException throws IOException if there is a failure in obtaining the token
+   */
+
+  public static AzureADToken getTokenFromManagedIdentity(final String authEndpoint, boolean bypassCache) throws IOException {
+    QueryParams qp = new QueryParams();
+
+    qp.add("api-version", "2018-02-01");
+    qp.add("resource", RESOURCE_NAME);
+
+    if (bypassCache) {
+      qp.add("bypass_cache", "true");
+    }
+
+    Hashtable<String, String> headers = new Hashtable<>();
+    headers.put("Metadata", "true");
+
+    // this is added in the AbfsClient.java
+    // x-ms-version is updated to a newer one
+    // -H "Authorization: Bearer $access_token"
+    // -H "x-ms-version: 2021-08-06"
+
+    LOG.debug("AADToken: starting to fetch token using Managed Identity");
+    return getTokenCall(authEndpoint, qp.serialize(), headers, "GET", false);
+  }
+
+
   /**
    * Gets Azure Active Directory token using refresh token.
    *
@@ -165,6 +203,7 @@ public final class AzureADAuthenticator {
    * @return {@link AzureADToken} obtained using the refresh token
    * @throws IOException throws IOException if there is a failure in connecting to Azure AD
    */
+
   public static AzureADToken getTokenUsingRefreshToken(
       final String authEndpoint, final String clientId,
       final String refreshToken) throws IOException {
@@ -184,6 +223,7 @@ public final class AzureADAuthenticator {
    * requestId and error message, it is thrown when AzureADAuthenticator
    * failed to get the Azure Active Directory token.
    */
+
   @InterfaceAudience.LimitedPrivate("authorization-subsystems")
   @InterfaceStability.Unstable
   public static class HttpException extends IOException {
@@ -382,6 +422,7 @@ public final class AzureADAuthenticator {
           conn.getHeaderFields());
 
       String requestId = conn.getHeaderField("x-ms-request-id");
+      // x-ms-version
       String responseContentType = conn.getHeaderField("Content-Type");
       long responseContentLength = conn.getHeaderFieldLong("Content-Length", 0);
 
