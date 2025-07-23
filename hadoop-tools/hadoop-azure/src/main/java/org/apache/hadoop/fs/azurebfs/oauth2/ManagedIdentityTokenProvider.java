@@ -73,7 +73,7 @@ public class ManagedIdentityTokenProvider extends AccessTokenProvider {
     // In case of, Token is not refreshed for 1 hr or any clock skew issues,
     // refresh token.
     if (expiring) {
-      LOG.debug("ManagedIdentitytoken: token renewing. Time elapsed since last token fetch:"
+      LOG.debug("ManagedIdentityTokenProvider: token renewing. Time elapsed since last token fetch:"
           + " {} milli seconds", elapsedTimeSinceLastTokenRefreshInMillis);
     }
 

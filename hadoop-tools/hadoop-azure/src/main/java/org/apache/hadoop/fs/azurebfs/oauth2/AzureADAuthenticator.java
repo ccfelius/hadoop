@@ -182,12 +182,6 @@ public final class AzureADAuthenticator {
     Hashtable<String, String> headers = new Hashtable<>();
     headers.put("Metadata", "true");
 
-    // this is added in the AbfsClient.java
-    // x-ms-version is updated to a newer one
-    // -H "Authorization: Bearer $access_token"
-    // -H "x-ms-version: 2021-08-06"
-
-    LOG.debug("AADToken: starting to fetch token using Managed Identity");
     return getTokenCall(authEndpoint, qp.serialize(), headers, "GET", false);
   }
 

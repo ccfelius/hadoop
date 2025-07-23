@@ -875,14 +875,8 @@ public class AbfsConfiguration{
           authority = appendSlashIfNeeded(authority);
           tokenProvider = new MsiTokenProvider(authEndpoint, tenantGuid,
               clientId, authority);
-          LOG.trace("MsiTokenProvider initialized");
           } else if (tokenProviderClass == ManagedIdentityTokenProvider.class) {
-            // Managed Identity Custom Implementation
-            // this always defaults to the default value for the authEndpoint
-          LOG.trace("Trying to Initialize ManagedIdentityTokenProvider");
           tokenProvider = new ManagedIdentityTokenProvider();
-          LOG.trace("ManagedIdentityTokenProvider initialized");
-          // End custom implementation
         } else if (tokenProviderClass == RefreshTokenBasedTokenProvider.class) {
           String authEndpoint = getTrimmedPasswordString(
               FS_AZURE_ACCOUNT_OAUTH_REFRESH_TOKEN_ENDPOINT,
